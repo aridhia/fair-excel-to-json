@@ -19,7 +19,9 @@ The script uses the following Python3 libraries:
 -i <output_filename>
 
 For example:
+```sh
 python3 fair_metadata_converter.py -i FAIR_Metadata_Template.xlsx -o dataset_json.json
+```
 
 # Feedback
 Contact Gary McGilvary (gary.mcgilvary@aridhia.com) to provide feedback
