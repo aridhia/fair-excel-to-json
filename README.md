@@ -29,7 +29,7 @@ python3 fair_metadata_converter.py -i FAIR_Metadata_Template.xlsx -o dataset_jso
 ```sh
 python3 dictionaries_to_xml.py dataset_json.json
 ```
-This will provide an XML file for each data dictionary
+This will provide an XML file for each data dictionary.
 
 # Feedback
 Contact Gary McGilvary (gary.mcgilvary@aridhia.com) to provide feedback
