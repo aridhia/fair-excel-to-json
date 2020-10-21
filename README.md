@@ -3,6 +3,8 @@ In order to create a dataset in FAIR via the API, a JSON representation of the d
 - a FAIR metadata Excel template that can be completed with a dataset's metadata
 - an Excel to FAIR JSON convertor that can be used to create the dataset via the API.
 
+If required, data dictionaries can be converted from the resulting JSON to XML.
+
 # Pre-requisites
 To run the converter script you need to have the following installed:
 
@@ -22,6 +24,12 @@ For example:
 ```sh
 python3 fair_metadata_converter.py -i FAIR_Metadata_Template.xlsx -o dataset_json.json
 ```
+
+3. If required, data dictionaries can be converted from the resulting JSON to XML by running the 'dictionaries_to_xml.py' script. For example:
+```sh
+python3 dictionaries_to_xml.py dataset_json.json
+```
+This will provide an XML file for each data dictionary
 
 # Feedback
 Contact Gary McGilvary (gary.mcgilvary@aridhia.com) to provide feedback
