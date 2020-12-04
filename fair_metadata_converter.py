@@ -28,16 +28,11 @@ def read_sheet(sheet_name):
 def create_json_structure():
 	
 
-	datasets_arr=[]
 	json_dict={}
 	json_dict['catalogue']=create_catalogue_section()
 	json_dict['dictionaries']=create_dictionary_section()
-	datasets_arr.append(json_dict)
 
-	datasets_dict={}
-	datasets_dict['datasets']=datasets_arr
-
-	json_content=json.dumps(datasets_dict, indent=4)
+	json_content=json.dumps(json_dict, indent=4)
 	print(json_content)
 
 	f = open(script_args.output_file, "a")

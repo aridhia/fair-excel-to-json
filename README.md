@@ -13,6 +13,7 @@ To run the converter script you need to have the following installed:
 The script uses the following Python3 libraries:
 - pandas
 - numpy
+- xlrd
 
 # Getting Started
 1. Complete the 'FAIR_Metadata_Template.xlsx' Excel spreadsheet with metadata for your dataset.
