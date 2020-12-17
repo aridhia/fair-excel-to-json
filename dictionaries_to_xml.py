@@ -9,7 +9,7 @@ data=''
 with open(inputfile) as json_file: 
     data = json.load(json_file) 
 
-for i in data['datasets'][0]['dictionaries']:
+for i in data['dictionaries']:
 	print(i)
 	root = ET.Element("DatasetDefinition")
 	root.set("Action", "create")

@@ -45,13 +45,11 @@ def create_catalogue_section():
 	pd=pd.dropna()
 
 	result = pd.to_dict(orient="records")
-
+	supported_values=['id','title','description', 'creator','contactPoint','publisher_name','publisher_url','license','versionInfo','keyword','identifier','rights']
 	catalogue_dict={}
 	publisher={}
 	for row in result:
-		print(row)
-		if row['value']!='to_be_excluded':
-
+		if row['key'] in supported_values:
 			# Those that need more work to get into required structure
 			if row['key']=='publisher_name':
 				publisher['name']=row['value']
@@ -75,6 +73,7 @@ def create_dictionary_section():
 	for row in dictionaries:
 		fields_dict={}
 		fields_dict['id']=row['name']
+		fields_dict['description']=row['description']
 		fields,lookups=create_fields_json(row['name'])
 		fields_dict['fields']=fields
 		fields_dict['lookups']=lookups
