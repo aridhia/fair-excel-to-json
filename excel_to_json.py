@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import numpy as np
 import argparse
+import config
 
 script_args=''
 
@@ -21,26 +22,12 @@ def parse_arguments():
 # Read Excel Sheet
 def read_sheet(sheet_name):
 	global script_args
-	print(script_args)
 	return pd.read_excel(io=script_args.input_file,sheet_name=sheet_name)
 
-# Create top level JSON: datasets, catalogues, dictionaries
-def create_json_structure():
-	
-
-	json_dict={}
-	json_dict['catalogue']=create_catalogue_section()
-	json_dict['dictionaries']=create_dictionary_section()
-
-	json_content=json.dumps(json_dict, indent=4)
-	print(json_content)
-
-	f = open(script_args.output_file, "a")
-	f.write(json_content)
-	f.close()
 
 # Get catalogue information
 def create_catalogue_section():
+	config.log_message("Converting the catalogue to JSON...")
 	pd = read_sheet('catalogue')
 	pd=pd.dropna()
 
@@ -61,6 +48,7 @@ def create_catalogue_section():
 				catalogue_dict[row['key']]=row['value']
 
 	catalogue_dict["publisher"]=publisher	
+	config.log_message("Done!")
 
 	return catalogue_dict	
 
@@ -71,6 +59,8 @@ def create_dictionary_section():
 
 	dicts_arr=[]
 	for row in dictionaries:
+		config.log_message("Converting dictionary '" + row['name'] + "' to JSON...")
+
 		fields_dict={}
 		fields_dict['id']=row['name']
 		fields_dict['description']=row['description']
@@ -79,11 +69,13 @@ def create_dictionary_section():
 		fields_dict['lookups']=lookups
 		dicts_arr.append(fields_dict)
 
+		config.log_message("Done!")
 	return dicts_arr	
 
 
 # Get fields for a dictionary
 def create_fields_json(dictionary_name):
+	config.log_message("-- Converting fields to JSON...")
 	pd = read_sheet('fields')
 	pd=pd.replace(np.nan,"null")
 	result = pd.to_dict(orient="records")
@@ -105,12 +97,12 @@ def create_fields_json(dictionary_name):
 	lookups_dict={}
 	for lookup in constraints_arr:
 		lookups_dict[lookup]=create_lookups_json(lookup)
-	
 	return fields_arr, lookups_dict
 
 
 # Get lookups for a dictionary
 def create_lookups_json(lookup_name):
+	config.log_message("-- Converting lookup: '" + lookup_name + "' to JSON...")
 	pd = read_sheet('lookups')
 	result = pd.to_dict(orient="records")
 
@@ -121,9 +113,21 @@ def create_lookups_json(lookup_name):
 			lookups_dict['name']=row['name']
 			lookups_dict['description']=row['description']
 			lookups_arr.append(lookups_dict)
-	
 	return lookups_arr
 	
+# Create top level JSON: datasets, catalogues, dictionaries
+def create_json_structure():
+	config.log_message("Converting Excel to FAIR JSON...")
+	json_dict={}
+	json_dict['catalogue']=create_catalogue_section()
+	json_dict['dictionaries']=create_dictionary_section()
+
+	json_content=json.dumps(json_dict, indent=4)
+
+	f = open(script_args.output_file, "a")
+	f.write(json_content)
+	f.close()	
+	config.log_message("Conversion Complete. The FAIR JSON can be in the file '" + str(script_args.output_file)+"'")
 
 parse_arguments()
 create_json_structure()
