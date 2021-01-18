@@ -48,14 +48,16 @@ def convert_catalogue(catalogue_data):
 
 def convert_dictionaries(dict_data):
 	config.log_message("Converting dictionaries to Excel sheet...")
-	keys=[]
-	values=[]
+	codes=[]
+	names=[]
+	descriptions=[]
 
 	for dictionary in dict_data:
-		keys.append(dictionary['id'])
-		values.append(dictionary['description'])		
+		codes.append(dictionary['code'])
+		names.append(dictionary['name'])
+		descriptions.append(dictionary['description'])		
 
-	data={'name':keys,'description':values}
+	data={'id':codes,'name':names,'description':descriptions}
 
 	df=pd.DataFrame(data=data)
 	config.log_message("Done!")
@@ -73,14 +75,14 @@ def convert_fields(dict_data):
 
 	for dictionary in dict_data:
 		for field in dictionary['fields']:
-			dict_names.append(dictionary['id'])
+			dict_names.append(dictionary['code'])
 			names.append(field['name'])
 			labels.append(field['label'])
 			types.append(field['type'])
 			constraints.append(field['constraints'])	
 			descriptions.append(field['description'])			
 
-	data={'dictionary_name':dict_names,'name': names, 'label':labels,'type': types, 'constraints':constraints, 'description':descriptions}
+	data={'dictionary_id':dict_names,'name': names, 'label':labels,'type': types, 'constraints':constraints, 'description':descriptions}
 
 	df=pd.DataFrame(data=data)
 	config.log_message("Done!")

@@ -13,17 +13,20 @@ for i in data['dictionaries']:
 	print(i)
 	root = ET.Element("DatasetDefinition")
 	root.set("Action", "create")
-	root.set("TableName", i['id'])
+	root.set("TableName", i['code'])
 	root.set("xmlns", "http://aridhia.com/ddf")
 
 	Title = ET.SubElement(root, "Title")
-	Title.text = i['id']
+	Title.text = i['name']
+
+	Code = ET.SubElement(root, "ID")
+	Code.text = i['code']
 
 	Url = ET.SubElement(root, "Url")
 	Url.text = ''
 
 	Description = ET.SubElement(root, "Description")
-	Description.text = ''
+	Description.text = i['description']
 
 	Columns = ET.SubElement(root, "Columns")
 
@@ -35,7 +38,7 @@ for i in data['dictionaries']:
 		Column.set("Name", j['name'])
 		Column.set("Type", j['type'])
 
-	outputfile = i['id'] + ".xml"
+	outputfile = i['code'] + ".xml"
 
 	xmlstr = MD.parseString(ET.tostring(root)).toprettyxml(indent="   ")
 

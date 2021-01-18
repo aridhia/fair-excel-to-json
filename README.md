@@ -33,7 +33,7 @@ If required, existing FAIR JSON can be converted to Excel, e.g. for easy or shar
 2. Run the 'json-to-excel.py' script with the following arguments:
 ```
 -i <path_to_json>
--i <output_filename>.xslx
+-o <output_filename>.xslx
 ```
 For example:
 ```sh
@@ -45,7 +45,7 @@ If required, data dictionaries can be converted from the resulting JSON to XML.
 1. Download a copy of the FAIR JSON, e.g. downloaded from FAIR or extract from the API.
 2. Run the 'json-dictionaries-to-xml.py' script. For example:
 ```sh
-python3 dictionaries_to_xml.py dataset.json
+python3 json-dictionaries-to-xml.py dataset.json
 ```
 This will provide an XML file for each data dictionary.
 

@@ -62,9 +62,10 @@ def create_dictionary_section():
 		config.log_message("Converting dictionary '" + row['name'] + "' to JSON...")
 
 		fields_dict={}
-		fields_dict['id']=row['name']
+		fields_dict['code']=row['id']
+		fields_dict['name']=row['name']
 		fields_dict['description']=row['description']
-		fields,lookups=create_fields_json(row['name'])
+		fields,lookups=create_fields_json(row['id'])
 		fields_dict['fields']=fields
 		fields_dict['lookups']=lookups
 		dicts_arr.append(fields_dict)
@@ -74,7 +75,7 @@ def create_dictionary_section():
 
 
 # Get fields for a dictionary
-def create_fields_json(dictionary_name):
+def create_fields_json(dictionary_id):
 	config.log_message("-- Converting fields to JSON...")
 	pd = read_sheet('fields')
 	pd=pd.replace(np.nan,"null")
@@ -83,7 +84,7 @@ def create_fields_json(dictionary_name):
 	fields_arr=[]
 	constraints_arr=[]
 	for row in result:
-		if row['dictionary_name']==dictionary_name:
+		if row['dictionary_id']==dictionary_id:
 			fields_dict={}
 			fields_dict['name']=row['name']
 			fields_dict['label']=row['label']
