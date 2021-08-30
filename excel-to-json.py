@@ -24,6 +24,23 @@ def read_sheet(sheet_name):
 	global script_args
 	return pd.read_excel(io=script_args.input_file,sheet_name=sheet_name)
 
+# Get configuration information
+
+def create_configuration_section():
+	config.log_message("Converting the configuration to JSON...")
+	pd = read_sheet('configuration')
+	pd=pd.dropna()
+
+	result = pd.to_dict(orient="records")
+	supported_values=['visibility','workflow_key']
+	configuration_dict={}
+	for row in result:
+		if row['key'] in supported_values:
+			configuration_dict[row['key']]=row['value']
+
+	config.log_message("Done!")
+
+	return configuration_dict
 
 # Get catalogue information
 def create_catalogue_section():
@@ -82,7 +99,7 @@ def create_fields_json(dictionary_id):
 	result = pd.to_dict(orient="records")
 
 	fields_arr=[]
-	constraints_arr=[]
+	constraints_dict={}
 	for row in result:
 		if row['dictionary_id']==dictionary_id:
 			fields_dict={}
@@ -91,35 +108,38 @@ def create_fields_json(dictionary_id):
 			fields_dict['type']=row['type']
 			fields_dict['constraints']=row['constraints']
 			if row['constraints']!='null':
-				constraints_arr.append(row['constraints'])
+				constraints_dict[row['constraints']]=row['type']
 			fields_dict['description']=row['description']
 			fields_arr.append(fields_dict)
 
 	lookups_dict={}
-	for lookup in constraints_arr:
-		lookups_dict[lookup]=create_lookups_json(lookup)
+	for constraint, type in constraints_dict.items():
+		lookups_dict[constraint]=create_lookups_json(constraint, type)
 	return fields_arr, lookups_dict
 
 
 # Get lookups for a dictionary
-def create_lookups_json(lookup_name):
+def create_lookups_json(lookup_name, lookup_type):
 	config.log_message("-- Converting lookup: '" + lookup_name + "' to JSON...")
 	pd = read_sheet('lookups')
 	result = pd.to_dict(orient="records")
 
-	lookups_arr=[]
+	lookups_dict={}
+	options_arr=[]
+	lookups_dict['type']=lookup_type
+	lookups_dict['options']=options_arr
 	for row in result:
 		if row['lookup']==lookup_name:
-			lookups_dict={}
-			lookups_dict['name']=row['name']
-			lookups_dict['description']=row['description']
-			lookups_arr.append(lookups_dict)
-	return lookups_arr
+			options_dict={}
+			options_dict['name']=row['name']
+			options_dict['description']=str(row['description'])
+			options_arr.append(options_dict)
+	return lookups_dict
 	
 # Create top level JSON: datasets, catalogues, dictionaries
 def create_json_structure():
 	config.log_message("Converting Excel to FAIR JSON...")
-	json_dict={}
+	json_dict=create_configuration_section()
 	json_dict['catalogue']=create_catalogue_section()
 	json_dict['dictionaries']=create_dictionary_section()
 
@@ -128,7 +148,7 @@ def create_json_structure():
 	f = open(script_args.output_file, "a")
 	f.write(json_content)
 	f.close()	
-	config.log_message("Conversion Complete. The FAIR JSON can be in the file '" + str(script_args.output_file)+"'")
+	config.log_message("Conversion Complete. The FAIR JSON can be found in the file '" + str(script_args.output_file)+"'")
 
 parse_arguments()
 create_json_structure()

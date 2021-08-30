@@ -98,7 +98,7 @@ def convert_lookups(dict_data):
 	
 	for dictionary in dict_data:
 		for lookup in dictionary['lookups']:
-			for vocab in dictionary['lookups'][lookup]:
+			for vocab in dictionary['lookups'][lookup]['options']:
 				lookup_names.append(lookup)
 				field_names.append(vocab['name'])
 				descriptions.append(vocab['description'])
