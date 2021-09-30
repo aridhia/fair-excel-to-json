@@ -20,15 +20,15 @@ def parse_arguments():
     script_args = parser.parse_args()
 
 # Read Excel Sheet
-def read_sheet(sheet_name):
+def read_sheet(sheet_name,converters):
 	global script_args
-	return pd.read_excel(io=script_args.input_file,sheet_name=sheet_name)
+	return pd.read_excel(io=script_args.input_file,sheet_name=sheet_name,converters=converters)
 
 # Get configuration information
 
 def create_configuration_section():
 	config.log_message("Converting the configuration to JSON...")
-	pd = read_sheet('configuration')
+	pd = read_sheet('configuration',{'key':str,'value':str})
 	pd=pd.dropna()
 
 	result = pd.to_dict(orient="records")
@@ -45,7 +45,7 @@ def create_configuration_section():
 # Get catalogue information
 def create_catalogue_section():
 	config.log_message("Converting the catalogue to JSON...")
-	pd = read_sheet('catalogue')
+	pd = read_sheet('catalogue',{'key':str,'value':str})
 	pd=pd.dropna()
 
 	result = pd.to_dict(orient="records")
@@ -71,7 +71,7 @@ def create_catalogue_section():
 
 # Get dictionary information
 def create_dictionary_section():
-	pd = read_sheet('dictionaries')
+	pd = read_sheet('dictionaries',{'id':str,'name':str,'description':str})
 	dictionaries = pd.to_dict(orient="records")
 
 	dicts_arr=[]
@@ -94,7 +94,7 @@ def create_dictionary_section():
 # Get fields for a dictionary
 def create_fields_json(dictionary_id):
 	config.log_message("-- Converting fields to JSON...")
-	pd = read_sheet('fields')
+	pd = read_sheet('fields',{'dictionary_id':str,'name':str,'label':str,'type':str,'constraints':str,'description':str})
 	pd=pd.replace(np.nan,"null")
 	result = pd.to_dict(orient="records")
 
@@ -121,7 +121,7 @@ def create_fields_json(dictionary_id):
 # Get lookups for a dictionary
 def create_lookups_json(lookup_name, lookup_type):
 	config.log_message("-- Converting lookup: '" + lookup_name + "' to JSON...")
-	pd = read_sheet('lookups')
+	pd = read_sheet('lookups',{'lookup':str,'name':str,'description':str})
 	result = pd.to_dict(orient="records")
 
 	lookups_dict={}
