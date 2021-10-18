@@ -32,7 +32,7 @@ def create_configuration_section():
 	pd=pd.dropna()
 
 	result = pd.to_dict(orient="records")
-	supported_values=['visibility','workflow_key']
+	supported_values=['visibility','workflow_key','code']
 	configuration_dict={}
 	for row in result:
 		if row['key'] in supported_values:
@@ -49,7 +49,7 @@ def create_catalogue_section():
 	pd=pd.dropna()
 
 	result = pd.to_dict(orient="records")
-	supported_values=['id','title','description', 'creator','contactPoint','publisher_name','publisher_url','license','versionInfo','keyword','identifier','rights']
+	supported_values=['title','description','creator','contactPoint','license','versionInfo','keyword','identifier','rights','publisher_name','publisher_url']
 	catalogue_dict={}
 	publisher={}
 	for row in result:
@@ -71,7 +71,7 @@ def create_catalogue_section():
 
 # Get dictionary information
 def create_dictionary_section():
-	pd = read_sheet('dictionaries',{'id':str,'name':str,'description':str})
+	pd = read_sheet('dictionaries',{'code':str,'name':str,'description':str})
 	dictionaries = pd.to_dict(orient="records")
 
 	dicts_arr=[]
@@ -79,10 +79,10 @@ def create_dictionary_section():
 		config.log_message("Converting dictionary '" + row['name'] + "' to JSON...")
 
 		fields_dict={}
-		fields_dict['code']=row['id']
+		fields_dict['code']=row['code']
 		fields_dict['name']=row['name']
 		fields_dict['description']=row['description']
-		fields,lookups=create_fields_json(row['id'])
+		fields,lookups=create_fields_json(row['code'])
 		fields_dict['fields']=fields
 		fields_dict['lookups']=lookups
 		dicts_arr.append(fields_dict)
@@ -92,16 +92,16 @@ def create_dictionary_section():
 
 
 # Get fields for a dictionary
-def create_fields_json(dictionary_id):
+def create_fields_json(dictionary_code):
 	config.log_message("-- Converting fields to JSON...")
-	pd = read_sheet('fields',{'dictionary_id':str,'name':str,'label':str,'type':str,'constraints':str,'description':str})
+	pd = read_sheet('fields',{'dictionary_code':str,'name':str,'label':str,'type':str,'constraints':str,'description':str})
 	pd=pd.replace(np.nan,"null")
 	result = pd.to_dict(orient="records")
 
 	fields_arr=[]
 	constraints_dict={}
 	for row in result:
-		if row['dictionary_id']==dictionary_id:
+		if row['dictionary_code']==dictionary_code:
 			fields_dict={}
 			fields_dict['name']=row['name']
 			fields_dict['label']=row['label']
