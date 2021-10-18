@@ -22,18 +22,33 @@ def read_json():
 	    data = json.load(json_file)
 	return data 
 
+def convert_configuration(configuration_data):	
+	config.log_message("Converting configuration to Excel sheet...")
+	keys=[]
+	values=[]
+
+	for key in configuration_data:
+		if key in ('visibility','workflow_key','code'):
+			keys.append(key)
+			values.append(configuration_data[key])
+
+	data={'key':keys,'value':values}
+	df=pd.DataFrame(data=data)
+	config.log_message("Done!")
+	return df
 
 def convert_catalogue(catalogue_data):	
 	config.log_message("Converting catalogue to Excel sheet...")
 	keys=[]
 	values=[]
-
+	
 	for key in catalogue_data:
 		if key == 'publisher':
 			keys.append('publisher_name')
 			values.append(catalogue_data[key]['name'])
-			keys.append('publisher_url')
-			values.append(catalogue_data[key]['url'])
+			if 'url' in catalogue_data[key].keys():
+				keys.append('publisher_url')
+				values.append(catalogue_data[key]['url'])
 		elif key == 'keyword':
 			keys.append('keyword')
 			values.append(','.join(catalogue_data[key]))
@@ -57,7 +72,7 @@ def convert_dictionaries(dict_data):
 		names.append(dictionary['name'])
 		descriptions.append(dictionary['description'])		
 
-	data={'id':codes,'name':names,'description':descriptions}
+	data={'code':codes,'name':names,'description':descriptions}
 
 	df=pd.DataFrame(data=data)
 	config.log_message("Done!")
@@ -82,7 +97,7 @@ def convert_fields(dict_data):
 			constraints.append(field['constraints'])	
 			descriptions.append(field['description'])			
 
-	data={'dictionary_id':dict_names,'name': names, 'label':labels,'type': types, 'constraints':constraints, 'description':descriptions}
+	data={'dictionary_code':dict_names,'name': names, 'label':labels,'type': types, 'constraints':constraints, 'description':descriptions}
 
 	df=pd.DataFrame(data=data)
 	config.log_message("Done!")
@@ -124,6 +139,7 @@ def write_to_excel(dataframes):
 
 def convert_to_excel(data):
 	dataframes={}
+	dataframes['configuration']=convert_configuration(data)
 	dataframes['catalogue']=convert_catalogue(data['catalogue'])
 	dataframes['dictionaries']=convert_dictionaries(data['dictionaries'])
 	dataframes['fields']=convert_fields(data['dictionaries'])
